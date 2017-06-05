@@ -5,7 +5,7 @@ set SRCfiles [list FIFO_topTesting_bufferIN_OBJ_V.vhd               topTesting_f
 
 
 set SIMfolder sim
-set SIMfiles [list topTesting_tb.vhd]
+set SIMfiles [list ]
 set part xc7z020clg484-1
 
 
