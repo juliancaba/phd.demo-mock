@@ -29,8 +29,8 @@ class TestL2Norm(TimeTestCase):
         self.CONFIGURE_UNITTEST_TIME_OUTPUT_32BIT_WORDS(1)
         self.CONFIGURE_UNITTEST_TIME_ENABLE_CYCLES(0)
 
-        scale2_return(0.1)
-        scale2_expect(1240.0)
+        scale2_return(0.027164)
+        scale2_expect(124.0)
   
         self.UNITTEST_TIME_CONFIGURE()
 
@@ -38,14 +38,14 @@ class TestL2Norm(TimeTestCase):
         l2norm(din, dout)
         
         self.assertTimeGT(220)
-        self.assertTimeGT(500)
+        self.assertTimeLT(500)
 
         for i in range(0,16):
-            self.assertEqual(ref[i], dout[i])
+            self.assertTrue(abs(ref[i]-dout[i]) < 0.0001)
 
         
-        print ("scale2-CallCount {0}\n").format(scale2_callCount())
-        print ("scale2-FailureCount {0}\n").format(scale2_failureCount())
+        print ("scale2-CallCount {0}".format(scale2_callCount()))
+        print ("scale2-FailureCount {0}".format(scale2_failureCount()))
         scale2_print_callTimes()
         scale2_print_failures()
 
