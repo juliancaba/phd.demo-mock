@@ -49,6 +49,8 @@ class TestL2Norm(TimeTestCase):
         scale2_print_callTimes()
         scale2_print_failures()
 
+        #self.assertTrue(0 == scale2_failureCount());
+
             
 # if __name__ == '__main__':
 #     unittest.main()
