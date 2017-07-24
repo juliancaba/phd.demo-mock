@@ -131,14 +131,14 @@ void running_DOUBLE_SCALE2_callTime(hls::stream<unsigned int> &dst, hls::stream<
 
 
 ///////////////////////////////////////////////////////////////////////
-//                 Function:   fails
+//                 Function:   failures
 //////////////////////////////////////////////////////////////////////
-//static ap_int<12> ID_DOUBLE_SCALE2_fails = 6;
-static unsigned char ID_DOUBLE_SCALE2_fails = 6;
+//static ap_int<12> ID_DOUBLE_SCALE2_failures = 6;
+static unsigned char ID_DOUBLE_SCALE2_failures = 6;
 
 //const int DOUBLE_SCALE2_CALLTIME_WRITE_SIZE_BYTES = 4; //int
 
-/* struct RETURN_DOUBLE_SCALE2_fails{ */
+/* struct RETURN_DOUBLE_SCALE2_failures{ */
 /*   int _callCount; */
 /*   tSCALE2_PARAM _param; */
 /*   tSCALE2_PARAM _expect; */
@@ -147,14 +147,14 @@ static unsigned char ID_DOUBLE_SCALE2_fails = 6;
 /* }__attribute__((packed)); */
 
 
-//static tSCALE2_FAIL scale2_fails[32];
-static char scale2_fails_rd_index = 0;
+//static tSCALE2_FAIL scale2_failures[32];
+static char scale2_failures_rd_index = 0;
 
-//static struct RETURN_DOUBLE_SCALE2_fails ret_DOUBLE_SCALE2_fails;
-static tSCALE2_FAIL ret_DOUBLE_SCALE2_fails;
+//static struct RETURN_DOUBLE_SCALE2_failures ret_DOUBLE_SCALE2_failures;
+static tSCALE2_FAIL ret_DOUBLE_SCALE2_failures;
 
-//void running_DOUBLE_SCALE2_fails(hls::stream<unsigned int> &dst);//, hls::stream<tfail> &scale2_fails);
-void running_DOUBLE_SCALE2_fails(hls::stream<unsigned int> &dst, hls::stream<tSCALE2_FAIL> &scale2_fails);
+//void running_DOUBLE_SCALE2_failures(hls::stream<unsigned int> &dst);//, hls::stream<tfail> &scale2_failures);
+void running_DOUBLE_SCALE2_failures(hls::stream<unsigned int> &dst, hls::stream<tSCALE2_FAIL> &scale2_failures);
 //////////////////////////////////////////////////////////////////////
 
 #endif

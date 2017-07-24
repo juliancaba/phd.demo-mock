@@ -137,48 +137,48 @@ running_DOUBLE_SCALE2_callTime(hls::stream<unsigned int> &dst, hls::stream<unsig
 
 
 ///////////////////////////////////////////////////////////////////////
-//                  Function:   fails
+//                  Function:   failures
 //////////////////////////////////////////////////////////////////////
-union UNION_RET_DOUBLE_SCALE2_fails{
-  unsigned int words32[sizeof(ret_DOUBLE_SCALE2_fails)/sizeof(int)];
-  unsigned short words16[sizeof(ret_DOUBLE_SCALE2_fails)/sizeof(short)];
-  unsigned char words8[sizeof(ret_DOUBLE_SCALE2_fails)];
-}byteRet_DOUBLE_SCALE2_fails;
+union UNION_RET_DOUBLE_SCALE2_failures{
+  unsigned int words32[sizeof(ret_DOUBLE_SCALE2_failures)/sizeof(int)];
+  unsigned short words16[sizeof(ret_DOUBLE_SCALE2_failures)/sizeof(short)];
+  unsigned char words8[sizeof(ret_DOUBLE_SCALE2_failures)];
+}byteRet_DOUBLE_SCALE2_failures;
 
 
 void
-running_DOUBLE_SCALE2_fails(hls::stream<unsigned int> &dst, hls::stream<tSCALE2_FAIL> &scale2_fails)
+running_DOUBLE_SCALE2_failures(hls::stream<unsigned int> &dst, hls::stream<tSCALE2_FAIL> &scale2_failures)
 {
   short index = 0;
   tSCALE2_FAIL auxFail;
 
-  auxFail = scale2_fails.read();
+  auxFail = scale2_failures.read();
 
 
   unsigned int ptr_callCount;
   ptr_callCount = auxFail._callCount;
-  byteRet_DOUBLE_SCALE2_fails.words32[index++] = ptr_callCount;
+  byteRet_DOUBLE_SCALE2_failures.words32[index++] = ptr_callCount;
 
   unsigned int ptr_time;
   ptr_time = auxFail._time;
-  byteRet_DOUBLE_SCALE2_fails.words32[index++] = ptr_time;
+  byteRet_DOUBLE_SCALE2_failures.words32[index++] = ptr_time;
 
   tSCALE2_PARAM auxExpect;
   auxExpect = auxFail._expect;
   unsigned int ptr_expect_sum[1];
   toSequence(auxExpect.sum, ptr_expect_sum);
-  byteRet_DOUBLE_SCALE2_fails.words32[index++] = ptr_expect_sum[0];
+  byteRet_DOUBLE_SCALE2_failures.words32[index++] = ptr_expect_sum[0];
 
   tSCALE2_PARAM auxParam;
   auxParam = auxFail._param;
   unsigned int ptr_param_sum[1];
   toSequence(auxParam.sum, ptr_param_sum);
-  byteRet_DOUBLE_SCALE2_fails.words32[index++] = ptr_param_sum[0];
+  byteRet_DOUBLE_SCALE2_failures.words32[index++] = ptr_param_sum[0];
 
-  for(int itReturn=0; itReturn != sizeof(byteRet_DOUBLE_SCALE2_fails.words32)/DOUBLE_SCALE2_BUS_WIDTH_BYTES; itReturn++)  
-    dst.write(byteRet_DOUBLE_SCALE2_fails.words32[itReturn]);
+  for(int itReturn=0; itReturn != sizeof(byteRet_DOUBLE_SCALE2_failures.words32)/DOUBLE_SCALE2_BUS_WIDTH_BYTES; itReturn++)  
+    dst.write(byteRet_DOUBLE_SCALE2_failures.words32[itReturn]);
 
-  // scale2_fails_rd_index += 1;
+  // scale2_failures_rd_index += 1;
 }
 ///////////////////////////////////////////////////////////////////////
 

@@ -13,7 +13,7 @@ scale2_mock(hls::stream<unsigned int> &timeClock,
 			hls::stream<unsigned int> &scale2_callTime,
 			unsigned int &scale2_callCount,
 			unsigned int &scale2_failCount,
-			hls::stream<tSCALE2_FAIL> &scale2_fails,
+			hls::stream<tSCALE2_FAIL> &scale2_failures,
 			float sum)
 {
 #pragma HLS RESET variable=scale2_callCount
@@ -21,10 +21,10 @@ scale2_mock(hls::stream<unsigned int> &timeClock,
 #pragma HLS RESET variable=scale2_callTime
   //#pragma HLS RESET variable=scale2_return
   //#pragma HLS RESET variable=scale2_expect
-#pragma HLS RESET variable=scale2_fails
+#pragma HLS RESET variable=scale2_failures
 #pragma HLS STREAM variable=scale2_return depth=32
 #pragma HLS STREAM variable=scale2_expect depth=32
-#pragma HLS STREAM variable=scale2_fails depth=32
+#pragma HLS STREAM variable=scale2_failures depth=32
   tSCALE2_FAIL auxFail;
   float _return;
   float _expect_sum;
@@ -41,7 +41,7 @@ scale2_mock(hls::stream<unsigned int> &timeClock,
     auxFail._param.sum = sum;
     auxFail._expect.sum = _expect_sum;
     auxFail._time = _time;
-	scale2_fails.write(auxFail);
+	scale2_failures.write(auxFail);
     scale2_failCount += 1;
   }
   scale2_callTime.write(_time);

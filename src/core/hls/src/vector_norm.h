@@ -7,7 +7,7 @@ const static short HIST_SIZE=16;
 
 #include "typeDoublesFunc.h"
 
-#define l2norm(histIN, histOUT) l2norm_mock(histIN, histOUT, timeClock, scale2_return, scale2_expect, scale2_callTime, scale2_callCount, scale2_failCount, scale2_fails)
+#define l2norm(histIN, histOUT) l2norm_mock(histIN, histOUT, timeClock, scale2_return, scale2_expect, scale2_callTime, scale2_callCount, scale2_failCount, scale2_failures)
 
 float sum_hist_pow(float histIN[HIST_SIZE]);
 #pragma DOUBLE FUNC scale2
@@ -22,6 +22,6 @@ void l2norm_mock(float histIN[HIST_SIZE], float histOUT[HIST_SIZE],
 		 hls::stream<unsigned int> &scale2_callTime,
 		 unsigned int &scale2_callCount,
 		 unsigned int &scale2_failCount,
-		 hls::stream<tSCALE2_FAIL> &scale2_fails);
+		 hls::stream<tSCALE2_FAIL> &scale2_failures);
 
 #endif

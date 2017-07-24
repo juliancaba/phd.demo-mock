@@ -43,7 +43,7 @@ void l2norm_mock(float histIN[HIST_SIZE], float histOUT[HIST_SIZE],
 				 hls::stream<unsigned int> &scale2_callTime,
 				 unsigned int &scale2_callCount,
 				 unsigned int &scale2_failCount,
-				 hls::stream<tSCALE2_FAIL> &scale2_fails)
+				 hls::stream<tSCALE2_FAIL> &scale2_failures)
 {
   float scale = 0.f;
   float sum = 0.f;

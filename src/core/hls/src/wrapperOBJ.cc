@@ -31,7 +31,7 @@ testing_OBJ_l2norm_mock(hls::stream<unsigned int> &src, hls::stream<unsigned int
 			hls::stream<unsigned int> &scale2_callTime,
 			unsigned int &scale2_callCount,
 			unsigned int &scale2_failCount,
-			hls::stream<tSCALE2_FAIL> &scale2_fails)
+			hls::stream<tSCALE2_FAIL> &scale2_failures)
 {  
   readParameters_OBJ_l2norm(src);
   l2norm(args_OBJ_l2norm.histIN, ret_OBJ_l2norm.histOUT);

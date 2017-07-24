@@ -3,46 +3,20 @@
 #include "wrapper_DOUBLE_SCALE2.h"
 
 
-// union typeHead{
-//   unsigned int words32;
-//   unsigned char words8[4];  
-// }byteHeader[2];
-
-
 
 void
-inputBuffer_OBJ(hls::stream<unsigned int> &src)
-{
-  unsigned int aux;
-  aux = src.read();
-  bufferIN_OBJ.write(aux);
-}
-
-
-void
-outputBuffer_OBJ(hls::stream<unsigned int> &dst)
-{
-  unsigned int aux;
-  while(!bufferOUT_OBJ.empty()){
-    aux = bufferOUT_OBJ.read();
-    dst.write(aux);
-  }
-}
-
-
-void
-forward_OBJ(short size)
+forward_OBJ(hls::stream<unsigned int> &src, short size)
 {
   short it=0;
   while(it != size){
-    bufferIN_OBJ.read();
+    src.read();
     it += 1;
   }
 }
 
 
 void
-buildResponseHead_OBJ(hls::stream<unsigned int> &dst,
+buildResponse_OBJ(hls::stream<unsigned int> &dst,
 		  unsigned short objID, unsigned short size,
 		  unsigned char flags)
 {
@@ -53,29 +27,19 @@ buildResponseHead_OBJ(hls::stream<unsigned int> &dst,
   if(flags & FLAG_HAS_PAYLOAD){
     words32 = (objID<<16) | size;
     dst.write(words32);
-  }
-}
-
-
-void
-buildResponse_OBJ(unsigned short objID, unsigned short size,
-	      unsigned char flags)
-{
-  if (!bufferRESP_OBJ.empty()){
-    buildResponseHead_OBJ(bufferOUT_OBJ, objID, size, flags);
     while (!bufferRESP_OBJ.empty())
-      bufferOUT_OBJ.write(bufferRESP_OBJ.read());
+      dst.write(bufferRESP_OBJ.read());
   }
 }
 
 
 void
-getRequestHead_OBJ()
+getRequestHead_OBJ(hls::stream<unsigned int> &src)
 {
   int words32[2];
 
   for(int it=0; it != 2; it++)
-    words32[it] = bufferIN_OBJ.read();
+    words32[it] = src.read();
   //byteHeader[it].words32 = bufferIN.read();
 
   header_OBJ.nodeID = (words32[0] >> 24) & 0xFF;
@@ -84,80 +48,6 @@ getRequestHead_OBJ()
   header_OBJ.flags = words32[0] & 0xFF;
   header_OBJ.cb = (words32[1] >> 16) & 0xFFFF;
   header_OBJ.size = words32[1] & 0xFFFF;
-
-  /*
-  header.nodeID = byteHeader[0].words8[3];
-  header.objectID = byteHeader[0].words8[2];
-  header.methodID_flags = to_short(byteHeader[0].words8[1], byteHeader[0].words8[0]);
-  header.cb = to_short(byteHeader[1].words8[3], byteHeader[1].words8[2]);
-  header.size = to_short(byteHeader[1].words8[1], byteHeader[1].words8[0]);
-  */
-}
-
-
-void
-manager_OBJ(hls::stream<unsigned int> &timeClock)
-{
-#pragma HLS STREAM variable=bufferIN_OBJ depth=32
-#pragma HLS STREAM variable=bufferOUT_OBJ depth=32
-#pragma HLS STREAM variable=bufferRESP_OBJ depth=32
-  getRequestHead_OBJ();
-
-  if (ID_OBJ == header_OBJ.objectID || BROADCAST == header_OBJ.objectID){
-    if (ID_OBJ_l2norm == header_OBJ.methodID){
-      testing_OBJ_l2norm(bufferIN_OBJ, bufferRESP_OBJ);
-      buildResponse_OBJ(ID_OBJ, sizeof(ret_OBJ_l2norm)/OBJ_BUS_WIDTH_BYTES,
-     			FLAG_HAS_PAYLOAD|FLAG_RESPONSE|FLAG_OK);
-    }
-    else{
-      forward_OBJ(header_OBJ.size);
-      buildResponseHead_OBJ(bufferOUT_OBJ, ID_OBJ, 0, 
-			    FLAG_RESPONSE|FLAG_FAIL);
-    } 
-  }
-  else if (ID_DOUBLE_SCALE2 == header_OBJ.objectID){
-  //if (ID_DOUBLE_SCALE2 == header_OBJ.objectID || BROADCAST == header_OBJ.objectID){
-    if (ID_DOUBLE_SCALE2_return == header_OBJ.methodID){
-      running_DOUBLE_SCALE2_return(bufferIN_OBJ, scale2_return);
-      buildResponseHead_OBJ(bufferOUT_OBJ, ID_DOUBLE_SCALE2, 0,
-			    FLAG_RESPONSE|FLAG_OK);
-    }
-    else if (ID_DOUBLE_SCALE2_expect == header_OBJ.methodID){
-      running_DOUBLE_SCALE2_expect(bufferIN_OBJ, scale2_expect);
-      buildResponseHead_OBJ(bufferOUT_OBJ, ID_DOUBLE_SCALE2, 0,
-			    FLAG_RESPONSE|FLAG_OK);
-    }
-    else if (ID_DOUBLE_SCALE2_callCount == header_OBJ.methodID){
-      running_DOUBLE_SCALE2_callCount(bufferRESP_OBJ, scale2_callCount);
-      buildResponse_OBJ(ID_DOUBLE_SCALE2, sizeof(ret_DOUBLE_SCALE2_callCount)/DOUBLE_SCALE2_BUS_WIDTH_BYTES,
-			FLAG_HAS_PAYLOAD|FLAG_RESPONSE|FLAG_OK);
-    }
-    else if (ID_DOUBLE_SCALE2_fails == header_OBJ.methodID){
-      running_DOUBLE_SCALE2_fails(bufferRESP_OBJ, scale2_fails);
-      buildResponse_OBJ(ID_DOUBLE_SCALE2, sizeof(ret_DOUBLE_SCALE2_fails)/DOUBLE_SCALE2_BUS_WIDTH_BYTES,
-			FLAG_HAS_PAYLOAD|FLAG_RESPONSE|FLAG_OK);
-    }
-    else if (ID_DOUBLE_SCALE2_failCount == header_OBJ.methodID){
-      running_DOUBLE_SCALE2_failCount(bufferRESP_OBJ, scale2_failCount);
-      buildResponse_OBJ(ID_DOUBLE_SCALE2, sizeof(ret_DOUBLE_SCALE2_failCount)/DOUBLE_SCALE2_BUS_WIDTH_BYTES,
-			FLAG_HAS_PAYLOAD|FLAG_RESPONSE|FLAG_OK);
-    }
-    else if (ID_DOUBLE_SCALE2_callTime == header_OBJ.methodID){
-      running_DOUBLE_SCALE2_callTime(bufferRESP_OBJ, scale2_callTime);
-      buildResponse_OBJ(ID_DOUBLE_SCALE2, sizeof(ret_DOUBLE_SCALE2_callTime)/DOUBLE_SCALE2_BUS_WIDTH_BYTES,
-			FLAG_HAS_PAYLOAD|FLAG_RESPONSE|FLAG_OK);
-    }
-    else{
-      forward_OBJ(header_OBJ.size); 
-      buildResponseHead_OBJ(bufferOUT_OBJ, ID_DOUBLE_SCALE2, 0,
-			    FLAG_RESPONSE|FLAG_FAIL);
-    }
-  }
-  else{
-    forward_OBJ(header_OBJ.size);
-    buildResponseHead_OBJ(bufferOUT_OBJ, NULL_OBJ, 0,
-			  FLAG_RESPONSE|FLAG_FAIL);
-  }
 }
 
 
@@ -165,9 +55,64 @@ void
 topTesting(hls::stream<unsigned int> din, hls::stream<unsigned int> dout,
 	   hls::stream<unsigned int> timeClock)
 {
-  inputBuffer_OBJ(din);
-  manager_OBJ(timeClock);
-  outputBuffer_OBJ(dout);
-}
+ 
+#pragma HLS STREAM variable=bufferRESP_OBJ depth=32
+  getRequestHead_OBJ(din);
 
+  if (ID_OBJ == header_OBJ.objectID || BROADCAST == header_OBJ.objectID){
+    if (ID_OBJ_l2norm == header_OBJ.methodID){
+      testing_OBJ_l2norm(din, bufferRESP_OBJ);
+      buildResponse_OBJ(dout, ID_OBJ, sizeof(ret_OBJ_l2norm)/OBJ_BUS_WIDTH_BYTES,
+     			FLAG_HAS_PAYLOAD|FLAG_RESPONSE|FLAG_OK);
+    }
+    else{
+      forward_OBJ(din, header_OBJ.size);
+      buildResponse_OBJ(dout, ID_OBJ, 0, 
+			FLAG_RESPONSE|FLAG_FAIL);
+    } 
+  }
+  else if (ID_DOUBLE_SCALE2 == header_OBJ.objectID){
+  //if (ID_DOUBLE_SCALE2 == header_OBJ.objectID || BROADCAST == header_OBJ.objectID){
+    if (ID_DOUBLE_SCALE2_return == header_OBJ.methodID){
+      running_DOUBLE_SCALE2_return(din, scale2_return);
+      buildResponse_OBJ(dout, ID_DOUBLE_SCALE2, 0,
+			FLAG_RESPONSE|FLAG_OK);
+    }
+    else if (ID_DOUBLE_SCALE2_expect == header_OBJ.methodID){
+      running_DOUBLE_SCALE2_expect(din, scale2_expect);
+      buildResponse_OBJ(dout, ID_DOUBLE_SCALE2, 0,
+			    FLAG_RESPONSE|FLAG_OK);
+    }
+    else if (ID_DOUBLE_SCALE2_callCount == header_OBJ.methodID){
+      running_DOUBLE_SCALE2_callCount(bufferRESP_OBJ, scale2_callCount);
+      buildResponse_OBJ(dout, ID_DOUBLE_SCALE2, sizeof(ret_DOUBLE_SCALE2_callCount)/DOUBLE_SCALE2_BUS_WIDTH_BYTES,
+			FLAG_HAS_PAYLOAD|FLAG_RESPONSE|FLAG_OK);
+    }
+    else if (ID_DOUBLE_SCALE2_failures == header_OBJ.methodID){
+      running_DOUBLE_SCALE2_failures(bufferRESP_OBJ, scale2_failures);
+      buildResponse_OBJ(dout, ID_DOUBLE_SCALE2, sizeof(ret_DOUBLE_SCALE2_failures)/DOUBLE_SCALE2_BUS_WIDTH_BYTES,
+			FLAG_HAS_PAYLOAD|FLAG_RESPONSE|FLAG_OK);
+    }
+    else if (ID_DOUBLE_SCALE2_failCount == header_OBJ.methodID){
+      running_DOUBLE_SCALE2_failCount(bufferRESP_OBJ, scale2_failCount);
+      buildResponse_OBJ(dout, ID_DOUBLE_SCALE2, sizeof(ret_DOUBLE_SCALE2_failCount)/DOUBLE_SCALE2_BUS_WIDTH_BYTES,
+			FLAG_HAS_PAYLOAD|FLAG_RESPONSE|FLAG_OK);
+    }
+    else if (ID_DOUBLE_SCALE2_callTime == header_OBJ.methodID){
+      running_DOUBLE_SCALE2_callTime(bufferRESP_OBJ, scale2_callTime);
+      buildResponse_OBJ(dout, ID_DOUBLE_SCALE2, sizeof(ret_DOUBLE_SCALE2_callTime)/DOUBLE_SCALE2_BUS_WIDTH_BYTES,
+			FLAG_HAS_PAYLOAD|FLAG_RESPONSE|FLAG_OK);
+    }
+    else{
+      forward_OBJ(din, header_OBJ.size); 
+      buildResponse_OBJ(dout, ID_DOUBLE_SCALE2, 0,
+			FLAG_RESPONSE|FLAG_FAIL);
+    }
+  }
+  else{
+    forward_OBJ(din, header_OBJ.size);
+    buildResponse_OBJ(dout, NULL_OBJ, 0,
+		      FLAG_RESPONSE|FLAG_FAIL);
+  }
+}
 
