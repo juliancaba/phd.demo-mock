@@ -4,13 +4,13 @@
 
 
 import unittest
-from unittest_time import TimeTestCase
+from rc_unittest_remote import RCUnittestTestCase
 
 from vector_norm import l2norm
 from scale2_mock import *
 
 
-class TestL2Norm(TimeTestCase):
+class TestL2Norm(RCUnittestTestCase):
 
     def test_l2norm(self):
         ref = [0.0, 0.027164, 0.054328,
@@ -23,16 +23,16 @@ class TestL2Norm(TimeTestCase):
         for i in range(0,16):
             din.append(float(i))
             
-        self.UNITTEST_TIME_RESET()
-        self.CONFIGURE_UNITTEST_TIME_HW_ADDR(0x41000000)
-        self.CONFIGURE_UNITTEST_TIME_INPUT_32BIT_WORDS(18)
-        self.CONFIGURE_UNITTEST_TIME_OUTPUT_32BIT_WORDS(1)
-        self.CONFIGURE_UNITTEST_TIME_ENABLE_CYCLES(0)
+        self.TEST_RESET()
+        self.CONFIGURE_HW_ADDR(0x41000000)
+        self.CONFIGURE_IGNORE_INPUT(18)
+        self.CONFIGURE_IGNORE_OUTPUT(1)
+        self.CONFIGURE_ENABLE_CYCLES(0)
 
         scale2_return(0.027164)
         scale2_expect(124.0)
   
-        self.UNITTEST_TIME_CONFIGURE()
+        self.TEST_CONFIGURE()
 
         dout=[]
         l2norm(din, dout)
