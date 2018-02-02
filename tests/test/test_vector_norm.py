@@ -25,8 +25,8 @@ class TestL2Norm(RCUnittestTestCase):
             
         self.TEST_RESET()
         self.CONFIGURE_HW_ADDR(0x41000000)
-        self.CONFIGURE_IGNORE_INPUT(18)
-        self.CONFIGURE_IGNORE_OUTPUT(1)
+        self.CONFIGURE_SKIP_INPUT(18)
+        self.CONFIGURE_SKIP_OUTPUT(1)
         self.CONFIGURE_ENABLE_CYCLES(0)
 
         scale2_return(0.027164)
